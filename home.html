@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Secret Cyworld — Home</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="frame">
+  <div class="left">
+    <div class="section">
+      <h3>Photo Story</h3>
+      <div style="height:150px;"></div>
+    </div>
+    <div class="section miniroom">
+      <h3>Miniroom</h3>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="menu">
+      <a href="home.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="diary.html">Diary</a>
+      <a href="photo.html">Photo</a>
+      <a href="visitor.html">Visitor</a>
+      <a href="setting.html">Setting</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.onload = () => {
+    const flyer = document.getElementById('flyer');
+    flyer.style.left = "50px";
+    flyer.style.top = "50px";
+    flyer.style.display = 'block';
+    setTimeout(() => {
+      flyer.style.display = 'none';
+    }, 3000);
+  };
+</script>
+
+</body>
+</html>
