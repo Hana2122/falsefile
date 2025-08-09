@@ -1,54 +1,47 @@
+<?php
+// DB 연결
+$conn = new mysqli("localhost", "root", "", "mini_home");
+if ($conn->connect_error) {
+    die("DB 연결 실패: " . $conn->connect_error);
+}
+
+// 글 작성 처리
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $name = $conn->real_escape_string($_POST['name']);
+    $message = $conn->real_escape_string($_POST['message']);
+    $conn->query("INSERT INTO guestbook (name, message) VALUES ('$name', '$message')");
+    header("Location: visitor.php"); // 새로고침 시 중복 방지
+    exit;
+}
+
+// 글 목록 불러오기
+$result = $conn->query("SELECT * FROM guestbook ORDER BY created_at DESC");
+?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>Visitor - Secret Cyworld</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  .guestbook {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .guestbook input, .guestbook textarea {
-    width: 100%;
-    padding: 8px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-  }
-  .guestbook button {
-    padding: 8px;
-    background: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  .guestbook button:hover {
-    background: #555;
-  }
-  .messages {
-    margin-top: 15px;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
-  }
-  .message {
-    border-bottom: 1px dashed #ccc;
-    padding: 5px 0;
-  }
-</style>
 </head>
 <body>
 
 <div class="frame">
   <div class="left">
     <div class="section">
-      <h3>Visitor</h3>
-      <form class="guestbook" id="guestbookForm">
-        <input type="text" id="name" placeholder="이름" required>
-        <textarea id="message" placeholder="메세지를 남겨주세요" required></textarea>
-        <button type="submit">등록</button>
+      <h3>방명록</h3>
+      <form method="POST" action="">
+        <input type="text" name="name" placeholder="이름" required><br><br>
+        <textarea name="message" placeholder="메시지를 입력하세요" rows="4" required></textarea><br><br>
+        <button type="submit">작성</button>
       </form>
-      <div class="messages" id="messages"></div>
+    </div>
+    <div class="section">
+      <?php while($row = $result->fetch_assoc()): ?>
+        <p><strong><?php echo htmlspecialchars($row['name']); ?></strong> (<?php echo $row['created_at']; ?>)</p>
+        <p><?php echo nl2br(htmlspecialchars($row['message'])); ?></p>
+        <hr>
+      <?php endwhile; ?>
     </div>
   </div>
 
@@ -58,31 +51,12 @@
       <a href="profile.html">Profile</a>
       <a href="diary.html">Diary</a>
       <a href="photo.html">Photo</a>
-      <a href="visitor.html">Visitor</a>
+      <a href="visitor.php">Visitor</a>
       <a href="setting.html">Setting</a>
     </div>
   </div>
 </div>
 
-<script>
-  const form = document.getElementById('guestbookForm');
-  const messagesDiv = document.getElementById('messages');
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const message = document.getElementById('message').value.trim();
-
-    if(name && message) {
-      const msgElement = document.createElement('div');
-      msgElement.classList.add('message');
-      msgElement.innerHTML = `<strong>${name}</strong>: ${message}`;
-      messagesDiv.prepend(msgElement);
-
-      form.reset();
-    }
-  });
-</script>
-
 </body>
 </html>
+
